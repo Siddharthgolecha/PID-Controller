@@ -9,58 +9,29 @@ PID::PID() {}
 PID::~PID() {}
 
 void PID::Init(double Kp, double Ki, double Kd) {
-  PID::Kp = Kp;
-  PID::Ki = Ki;
-  PID::Kd = Kd;
-
-  p_error = 0.0;
-  i_error = 0.0;
-  d_error = 0.0;
-
-  // Previous cte.
+  values[0] = PID::Kp = Kp;
+  values[1] = PID::Ki = Ki;
+  values[2] = PID::Kd = Kd;
+  p_err = 0.0;
+  i_err = 0.0;
+  d_err = 0.0;
   prev_cte = 0.0;
-
-  // Counters.
-  counter = 0;
-  errorSum = 0.0;
-  minError = std::numeric_limits<double>::max();
-  maxError = std::numeric_limits<double>::min();
 }
 
 void PID::UpdateError(double cte) {
   // Proportional error.
-  p_error = cte;
+  p_err = cte;
 
   // Integral error.
-  i_error += cte;
+  i_err += cte;
 
   // Diferential error.
-  d_error = cte - prev_cte;
+  d_err = cte - prev_cte;
   prev_cte = cte;
 
-  errorSum += cte;
-  counter++;
-
-  if ( cte > maxError ) {
-    maxError = cte;
-  }
-  if ( cte < minError ) {
-    minError = cte;
-  }
 }
 
 double PID::TotalError() {
-  return p_error * Kp + i_error * Ki + d_error * Kd;
+  return p_err * Kp + i_err * Ki + d_err * Kd;
 }
 
-double PID::AverageError() {
-  return errorSum/counter;
-}
-
-double PID::MinError() {
-  return minError;
-}
-
-double PID::MaxError() {
-  return maxError;
-}

@@ -39,10 +39,10 @@ Fellow students have put together a guide to Windows set-up for the project [her
 
 The PID implementation is done on the [./src/PID.cpp](./src/PID.cpp). The [PID::UpdateError](./src/PID.cpp#L33) method calculates proportional, integral and derivative errors and the [PID::TotalError](./src/PID.cpp#L55) calculates the total error using the appropriate coefficients.
 
-- The **proportional** portion of the controller steered the car toward the center line (against the cross-track error). The car overshoots from the central line very easily and go out of the road very quickly. An example video where this component is used along is [here](./p.mp4).
+- The P, or **"proportional"**, component had the most directly observable effect on the car's behavior. It causes the car to steer proportional (and opposite) to the car's distance from the lane center. The car overshoots from the central line very easily and go out of the road very quickly. An example video where this component is used along is [here](./p.mp4).
 
-- The **integral** portion tries to eliminate a possible bias on the controlled system that could prevent the error to be eliminated. It makes the car to go in circles. In the case of the simulator, no bias is present. An example video where this component is used along is [here](./i.mp4).
+- The I, or **"integral"**, component counteracts a bias in the CTE which prevents the P-D controller from reaching the center line. In the case of the simulator, no bias is present. An example video where this component is used along is [here](./i.mp4).
 
-- The **differential** portion helps to counteract the proportional trend to overshoot the center line by smoothing the approach to it. An example video where this component is used along is [here](./d.mp4).
+- The D, or **"differential"**, component counteracts the P component's tendency to ring and overshoot the center line. A properly tuned D parameter will cause the car to approach the center line smoothly without ringing.. An example video where this component is used along is [here](./d.mp4).
 
-- The parameters were chosen manually by try and error. First, I made sure the car can drive straight with zero as parameters. Then I added the proportional and the car start going on following the road but it went out of the road. Then I added the differential factor to try to overcome the overshooting. The integral part only moved the car out of the road; so, I kept it as zero. After the car drove the track without going out of it, the parameters increased to minimize the average cross-track error on a single track lap. The final parameters where [P: 1.6, I: 0.0, D: 2.4].
+- I first used the parameters used in the lesson, i.e. [P: 0.2, I: 0.0004, D: 3.0]. I just manually tweaked some values to get the better and stable results. The final parameters where [P: 0.12, I: 0.0002, D: 3.5].

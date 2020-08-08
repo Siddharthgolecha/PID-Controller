@@ -12,6 +12,8 @@ constexpr double pi() { return M_PI; }
 double deg2rad(double x) { return x * pi() / 180; }
 double rad2deg(double x) { return x * 180 / pi(); }
 
+
+
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
 // else the empty string "" will be returned.
@@ -28,10 +30,18 @@ std::string hasData(std::string s) {
   return "";
 }
 
+  int i = 0;
+  double *dp ;
+  double* values;
+  double margin = 1e-311;
+  double best_err = 9999999999.0, err = 0.0, prev_err;
+
 int main()
 {
   uWS::Hub h;
 
+  double arr[] = {0.1, 0.0, 0.1};
+  dp = arr;
   PID pid;
   // nitialize the pid variable.
   // Only proportional.
@@ -44,7 +54,9 @@ int main()
   // pid.Init(0.0, 0.0, 1.0);
 
   // Final parameters.
-  pid.Init(1.6, 0.00, 2.4);
+  //pid.Init(1.0, 0.0, 1.0);
+  pid.Init(0.12, 0.0002, 3.5);
+ 
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -69,12 +81,38 @@ int main()
           * another PID controller to control the speed!
           */
           pid.UpdateError(cte);
-          steer_value -= pid.TotalError();
+          err = pid.TotalError();
+          steer_value -= err;
+          values = pid.Get_values();
+          
+          //sgd used for achieving optimimum value
+          /*
+          i %= 3;
 
-
+            if(abs(err) < best_err){
+              values[i] += *(dp+i);
+              *(dp+i) *= 1.1;
+              best_err = abs(err);
+            }
+            else{
+              values[i] -= *(dp+i);
+              *(dp+i) *= 0.9;
+            }
+			prev_err = err;
+          	i++;
+          
+          
           // DEBUG
-          std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
-          std::cout << "Average Error : " <<  pid.AverageError() << " [" << pid.MinError() << ", " << pid.MaxError() << "]"<< std::endl;
+          
+         
+          std::cout << "Steer value breakdown: " << std::endl;
+          std::cout << "P: " << values[0] << std::endl;
+          std::cout << "I: " << values[1] << std::endl; 
+          std::cout << "D: " << values[2] << std::endl;
+          std::cout << "Error: " << err << "| Best errro: " << best_err << std::endl ;
+          std::cout << "-------------" << std::endl;   
+          */
+          
           json msgJson;
           msgJson["steering_angle"] = steer_value;
           msgJson["throttle"] = 0.3;

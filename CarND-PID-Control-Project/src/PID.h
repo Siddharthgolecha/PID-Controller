@@ -1,30 +1,14 @@
 #ifndef PID_H
 #define PID_H
 
-class PID {
+class PID {  
+  
 public:
-  /*
-  * Errors
-  */
-  double p_error;
-  double i_error;
-  double d_error;
+ 
+  double Kp, Ki , Kd;
+  double values[3] = {0.0, 0.0, 0.0};
+  double p_err, i_err, d_err;
   double prev_cte;
-
-  /**
-   * Error counters
-  **/
-  long counter;
-  double errorSum;
-  double minError;
-  double maxError;
-
-  /*
-  * Coefficients
-  */
-  double Kp;
-  double Ki;
-  double Kd;
 
   /*
   * Constructor
@@ -50,21 +34,27 @@ public:
   * Calculate the total PID error.
   */
   double TotalError();
+  
+  /*
+  * Returns the PID sum.
+  */
+  double PID_sum(){
+  	return Kp + Ki + Kd;
+  }
 
   /*
-  *  Returns the average error.
+  * Returns the PID sum.
   */
-  double AverageError();
-
-  /*
-  * Returns the min error.
-  */
-  double MinError();
-
-  /*
-  * Returns the max error.
-  */
-  double MaxError();
+  void Set_value(double p, double i, double d){
+  	Kp = p;
+    Ki = i;
+    Kd = d;
+  }
+  
+  double* Get_values(){
+  	return values;
+  }
+  
 };
 
 #endif /* PID_H */
